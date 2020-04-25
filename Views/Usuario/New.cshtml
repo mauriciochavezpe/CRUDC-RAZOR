@@ -1,0 +1,66 @@
+﻿@using CRUD.Models.ViewModel
+@model VistaUsuario
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>New</h2>
+
+<form>
+    <div class="row">
+        <div class="form-group">
+            @Html.LabelFor(d => d.Name)
+            @Html.TextBoxFor(d => d.Name, new { id="name"})
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(d => d.Apellido)
+            @Html.TextBoxFor(d => d.Apellido, new { id = "apellido" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(d => d.Dni)
+            @Html.TextBoxFor(d => d.Dni, new { id = "dni" })
+        </div>
+
+        <button class="btn bg-success" onclick="jsAdd()">Agregar</button>
+    </div>
+
+</form>
+
+
+<script>
+
+    function jsAdd() {
+        var url ="@Url.Content("~/Usuario/Nuevo")";
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+                Name: document.getElementById("name").value,
+                Apellido: document.getElementById("apellido").value,
+                Dni: document.getElementById("dni").value
+            }),
+            headers: {
+                'Accept': "application/json",
+                'Content-Type': "application/json"
+            }
+        })
+            .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            else {
+                console.log("error al ejecutar")
+            }
+            })
+            .then(data => {
+            if (data != "1") {
+                console.log(data);
+            }
+            else {
+                document.location.href = "@Url.Content("~/Usuario/")";
+            }
+            })
+            .catch(e=>console.log(e))
+    }
+</script>

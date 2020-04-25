@@ -1,0 +1,143 @@
+﻿@using CRUD.Models.ViewModel
+@model VistaUsuario
+@{
+    ViewBag.Title = "Index";
+    Layout = null;
+}
+
+<h2>Index</h2>
+<form>
+    <div class="row">
+        <div class="form-group">
+            @Html.LabelFor(d => d.Name)
+            @Html.TextBoxFor(d => d.Name, new { id = "name" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(d => d.Apellido)
+            @Html.TextBoxFor(d => d.Apellido, new { id = "apellido" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(d => d.Dni)
+            @Html.TextBoxFor(d => d.Dni, new { id = "dni" })
+        </div>
+
+        <button class="btn bg-success" onclick="jsAdd()">Agregar</button>
+    </div>
+
+</form>
+
+<button type="button" class="btn bt-success" value="refrescar" onclick="get()" >Refrescar</button>
+<button class="btn bt-success" onclick="buscar()">Buscar</button>
+
+<div id="lista" style="border:1px solid #808080">
+
+</div>
+<table>
+    <thead>
+
+    <tr>
+        <th>ID</th>
+        <th>NOMBRE</th>
+        <th>APELLIDO</th>
+        <th>DNI</th>
+    </tr>
+    </thead>
+    <tbody id="data">
+
+    </tbody>
+</table>
+
+<script>
+    urlget = "@Url.Content("~/Usuario/List")";
+
+    get();
+    function get() {
+        fetch(urlget)
+            .then(response=>{
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                var tbody = document.getElementById("data");
+                tr = "";
+                for (var i = 0; i < data.length; i++) {
+                    tr += `<tr>
+                            <td>${data[i].Id}</td>
+                            <td>${data[i].Name}</td>
+                            <td>${data[i].Apellido}</td>
+                            <td>${data[i].Dni}</td>
+
+                            </tr>`;
+                }
+                tbody.innerHTML = tr;
+                //document.getElementById("lista").innerHTML = data;
+                })
+    }
+
+    function jsAdd() {
+        var url = "@Url.Content("~/Usuario/Nuevo")";
+           fetch(url, {
+            method: "POST",
+            body: JSON.stringify({
+                Name: document.getElementById("name").value,
+                Apellido: document.getElementById("apellido").value,
+                Dni: document.getElementById("dni").value
+            }),
+            headers: {
+                'Accept': "application/json",
+                'Content-Type': "application/json"
+            }
+        })
+            .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            else {
+                console.log("error al ejecutar")
+            }
+            })
+            .then(data => {
+            if (data != "1") {
+                console.log(data);
+            }
+            else {
+                this.get();
+            }
+            })
+            .catch(e=>console.log(e))
+    }
+
+    function buscar() {
+        var url = "@Url.Content("~/Usuario/Buscar")";
+        fetch(url, {
+            method: "POST",
+            body: JSON.stringify({ dni: document.getElementById("dni").value }),
+            headers: {
+                'Accept': "application/json",
+                'Content-Type': "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+                console.log(data);
+
+                var tbody = document.getElementById("data");
+                tbody.innerHTML = "";
+                
+                tr = "";
+                //for (var i = 0; i < data.length; i++) {
+                    tr += `<tr>
+                            <td>${data.Id}</td>
+                            <td>${data.Name}</td>
+                            <td>${data.Apellido}</td>
+                            <td>${data.Dni}</td>
+
+                            </tr>`;
+                //}
+                tbody.innerHTML = tr;
+        })
+
+    }
+</script>

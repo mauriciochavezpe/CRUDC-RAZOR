@@ -1,0 +1,18 @@
+﻿@using CRUD.Models.ViewModel
+@model List<VistaUsuario>
+
+    
+@{
+    Layout = null;
+}
+
+@foreach (var e in Model)
+{
+    <div>
+        Nombre: @e.Name <br />
+        Apellido: @e.Apellido <br />
+        DNI: @e.Dni <br />
+    </div>
+}
+
+
